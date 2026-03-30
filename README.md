@@ -47,7 +47,7 @@ Mentors: Edgar Riba, Miquel Farré &nbsp;|&nbsp; Duration: 350 hours &nbsp;|&nbs
 
 ---
 
-## 🎯 Project Vision
+## Project Vision
 
 Modern robotics needs vision intelligence that works *without the cloud* — in a factory, a warehouse, or outdoors where latency and privacy matter.  This project delivers:
 
@@ -58,7 +58,7 @@ Modern robotics needs vision intelligence that works *without the cloud* — in 
 
 ---
 
-## 💡 Why This Matters for Kornia
+##  Why This Matters for Kornia
 
 | Today | After GSoC |
 |---|---|
@@ -69,7 +69,7 @@ Modern robotics needs vision intelligence that works *without the cloud* — in 
 
 ---
 
-## 🏗 System Architecture
+## System Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -138,7 +138,7 @@ camera frame (BGR)
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 bubbaloop-vlm/
@@ -198,7 +198,7 @@ repositories.
 
 ---
 
-### ✅ [kornia-rs PR #722](https://github.com/kornia/kornia-rs/pull/722) — Fix ICP Test Assertions with Geometric Metrics
+### [kornia-rs PR #722](https://github.com/kornia/kornia-rs/pull/722) — Fix ICP Test Assertions with Geometric Metrics
 **Merged Feb 20, 2025** &nbsp;·&nbsp; Reviewer: `cjpurackal`
 
 **Problem:** The `test_icp_vanilla` test ran the ICP (Iterative Closest Point) algorithm
@@ -231,7 +231,7 @@ assert!(t_error < 0.01, "Translation error too large: {}", t_error);
 
 ---
 
-### ✅ [kornia PR #3463](https://github.com/kornia/kornia/pull/3463) — Fix Resize ONNX Export Compatibility
+### [kornia PR #3463](https://github.com/kornia/kornia/pull/3463) — Fix Resize ONNX Export Compatibility
 **Merged Jan 2025** &nbsp;·&nbsp; Reviewers: `edgarriba`, `sidd-27` &nbsp;·&nbsp; `+226 / -28`
 
 **Problem:** `torch.export` and ONNX tracing raised a hard error when encountering
@@ -264,7 +264,7 @@ would have caused silent export failures.
 
 ---
 
-### ✅ [kornia PR #3537](https://github.com/kornia/kornia/pull/3537) — Multi-format Bounding Box Support in `mean_iou_bbox`
+### [kornia PR #3537](https://github.com/kornia/kornia/pull/3537) — Multi-format Bounding Box Support in `mean_iou_bbox`
 **Merged Feb 17, 2025** &nbsp;·&nbsp; Reviewers: `sidd-27`, `edgarriba` &nbsp;·&nbsp; `+139 / -14`
 
 **Problem:** `mean_iou_bbox` only accepted `xyxy` format bounding boxes, forcing users
@@ -295,7 +295,7 @@ format conversion layer.
 
 ---
 
-### 🚧 [kornia-rs Issue #718](https://github.com/kornia/kornia-rs/issues/718) — Publish Benchmark Results in README/Docs
+###  [kornia-rs Issue #718](https://github.com/kornia/kornia-rs/issues/718) — Publish Benchmark Results in README/Docs
 **Assigned to me · In progress**
 
 The `kornia-rs` library has comprehensive benchmarks (`bench_histogram`, `bench_io`,
@@ -312,7 +312,7 @@ as part of this GSoC project.
 
 ---
 
-## 🧠 Technical Approach
+##  Technical Approach
 
 ### Why Qwen2.5-VL?
 
@@ -402,7 +402,7 @@ with pipeline:
 
 ---
 
-## 🦀 kornia-rs Contribution Plan
+##  kornia-rs Contribution Plan
 
 The Rust crate `kornia-vlm` will be structured to match the existing `kornia-rs` patterns:
 
@@ -449,7 +449,7 @@ fn bench_vlm_encode(c: &mut Criterion) {
 
 ---
 
-## 📊 Benchmark Methodology
+##  Benchmark Methodology
 
 Following the approach from [kornia-rs issue #718](https://github.com/kornia/kornia-rs/issues/718)
 (which I am assigned to), all benchmarks will be:
@@ -473,7 +473,7 @@ Results are auto-exported to Markdown tables and embedded in this README via CI.
 
 ---
 
-## 📅 12-Week Timeline
+## 12-Week Timeline
 
 ### Phase 1 — Foundation & ONNX Pipeline (Weeks 1–4)
 
@@ -559,7 +559,7 @@ Results are auto-exported to Markdown tables and embedded in this README via CI.
 
 ---
 
-## 🚀 Quickstart
+##  Quickstart
 
 ```bash
 # Clone
@@ -591,7 +591,7 @@ python -m kornia_vlm.benchmarks.suite --model qwen2.5-vl-7b-awq \
 
 ---
 
-## 🧪 Running Tests
+##  Running Tests
 
 ```bash
 # All tests (no GPU needed — uses mocks)
@@ -617,7 +617,7 @@ Beyond GSoC, the `kornia-vlm` infrastructure enables:
 
 ---
 
-## 📄 License
+##  License
 
 Apache 2.0 — matching the kornia project license.
 
