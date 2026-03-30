@@ -7,7 +7,7 @@
 ### Local Vision-Language Model Inference on Embedded Hardware
 
 **GSoC 2026 Proposal Prototype** — Project: *Local VLM Application on Bubbaloop*
-Mentors: Edgar Riba, Miquel Farré &nbsp;|&nbsp; Duration: 350 hours &nbsp;|&nbsp; Difficulty: Medium–Hard
+Mentors: Edgar Riba, Miquel Farré &nbsp;|&nbsp; Duration: 350 hours &nbsp;|&nbsp; Difficulty: Medium
 
 <br/>
 
