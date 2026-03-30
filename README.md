@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/kornia/kornia/main/docs/source/_static/img/kornia_logo.svg" width="180"/>
 
-# 🤖 bubbaloop-vlm
+# Bubbaloop VLM
 
 ### Local Vision-Language Model Inference on Embedded Hardware
 
