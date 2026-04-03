@@ -1,41 +1,13 @@
-"""
-bubbaloop_app.pipeline
-=======================
-Main Bubbaloop VLM pipeline — integrates kornia-vlm inference with the
-Bubbaloop ROS2-compatible camera node interface.
-
-Architecture
-------------
-
-  ┌─────────────┐    ┌──────────────────┐    ┌───────────────────┐
-  │  Camera /   │───▶│  kornia image    │───▶│  VLM Backbone     │
-  │  Video feed │    │  preprocessing   │    │  (Qwen2.5-VL)     │
-  └─────────────┘    └──────────────────┘    └────────┬──────────┘
-                           kornia.geometry                    │
-                           kornia.enhance                     ▼
-                                                  ┌───────────────────┐
-  ┌─────────────────────────────────────────────▶│  Application      │
-  │                                               │  Layer            │
-  │    ┌──────────────┐   ┌─────────────────┐    │  - SceneUnderst.  │
-  │    │  Bubbaloop   │◀──│  Structured     │◀───│  - VisualQA       │
-  │    │  action bus  │   │  JSON output    │    │  - Captioning     │
-  │    └──────────────┘   └─────────────────┘    └───────────────────┘
-  │
-  └── downstream: navigation planner, manipulation controller, UI
-
-This module is intentionally framework-agnostic: it works with a plain
-OpenCV VideoCapture OR a Bubbaloop CameraNode publisher.
-"""
+""" bubbaloop_app.pipeline
+Main Bubbaloop VLM pipeline — integrates kornia-vlm inference with the Bubbaloop ROS2-compatible camera node interface. 
+This module is intentionally framework-agnostic: it works with a plain OpenCV VideoCapture OR a Bubbaloop CameraNode publisher."""
 from __future__ import annotations
-
 import queue
 import threading
 import time
 from dataclasses import dataclass
 from typing import Callable, Optional
-
 import numpy as np
-
 from kornia_vlm.applications.scene_understanding import SceneOutput, SceneUnderstanding
 from kornia_vlm.applications.visual_qa import VisualQA, QAResult
 from kornia_vlm.models.base import BaseVLM, VLMConfig
@@ -75,28 +47,20 @@ class PipelineConfig:
 
 
 class BubbaVLMPipeline:
-    """
-    Real-time VLM inference pipeline for Bubbaloop.
-
+    """ Real-time VLM inference pipeline for Bubbaloop.
     Runs inference in a dedicated background thread at `target_fps`,
     decoupled from the camera capture rate.  Output callbacks allow
     integration with Bubbaloop's action bus or any other subscriber.
-
-    Parameters
-    ----------
-    model : BaseVLM
-        Pre-loaded VLM model.
+    Parameters:
+    model : BaseVLM Pre-loaded VLM model.
     config : PipelineConfig
 
-    Example
-    -------
+    Example ->
     >>> pipeline = BubbaVLMPipeline.from_config(PipelineConfig())
     >>> pipeline.register_callback(lambda out: print(out.summary))
     >>> pipeline.start()
     >>> pipeline.push_frame(camera_frame)
-    >>> # ... later ...
-    >>> pipeline.stop()
-    """
+    >>> pipeline.stop() """
 
     def __init__(self, model: BaseVLM, config: Optional[PipelineConfig] = None):
         self.model = model
@@ -106,13 +70,7 @@ class BubbaVLMPipeline:
         self._running = False
         self._thread: Optional[threading.Thread] = None
         self._stats = {"processed": 0, "dropped": 0, "errors": 0}
-
-        # Build application
-        vlm_cfg = VLMConfig(
-            device=self.cfg.device,
-            dtype=self.cfg.precision,
-            max_new_tokens=256,
-        )
+        vlm_cfg = VLMConfig(device=self.cfg.device,dtype=self.cfg.precision,max_new_tokens=256,)
         if self.cfg.mode == "scene_understanding":
             self._app = SceneUnderstanding(
                 model=self.model,
@@ -123,10 +81,6 @@ class BubbaVLMPipeline:
             self._app = VisualQA(model=self.model, config=vlm_cfg)
         else:
             self._app = SceneUnderstanding(model=self.model, config=vlm_cfg)
-
-    # ------------------------------------------------------------------
-    # Factory
-    # ------------------------------------------------------------------
 
     @classmethod
     def from_config(cls, config: PipelineConfig) -> "BubbaVLMPipeline":
@@ -139,26 +93,15 @@ class BubbaVLMPipeline:
             model.warmup(n=config.warmup_runs)
         return cls(model=model, config=config)
 
-    # ------------------------------------------------------------------
-    # Frame ingestion
-    # ------------------------------------------------------------------
-
     def push_frame(self, frame: np.ndarray) -> bool:
-        """
-        Push a camera frame to the inference queue.
-
-        Returns True if queued successfully, False if dropped (queue full).
-        """
+        """ Push a camera frame to the inference queue.
+        Returns True if queued successfully, False if dropped (queue full). """
         try:
             self._frame_queue.put_nowait(frame)
             return True
         except queue.Full:
             self._stats["dropped"] += 1
             return False
-
-    # ------------------------------------------------------------------
-    # Output routing
-    # ------------------------------------------------------------------
 
     def register_callback(self, fn: Callable) -> None:
         """Register a callback invoked with each inference result."""
@@ -171,10 +114,6 @@ class BubbaVLMPipeline:
             except Exception as e:
                 print(f"[Pipeline] Callback error: {e}")
 
-    # ------------------------------------------------------------------
-    # Background inference thread
-    # ------------------------------------------------------------------
-
     def _infer_loop(self) -> None:
         interval = 1.0 / self.cfg.target_fps
         while self._running:
@@ -186,7 +125,6 @@ class BubbaVLMPipeline:
 
             try:
                 if self.cfg.mode == "visual_qa":
-                    # Run all configured Q&A questions on this frame
                     for question in self.cfg.qa_questions:
                         result = self._app.ask(frame, question)
                         self._dispatch(result)
@@ -197,16 +135,11 @@ class BubbaVLMPipeline:
             except Exception as e:
                 self._stats["errors"] += 1
                 print(f"[Pipeline] Inference error: {e}")
-
-            # Throttle to target FPS
+              
             elapsed = time.perf_counter() - t_start
             sleep_time = interval - elapsed
             if sleep_time > 0:
                 time.sleep(sleep_time)
-
-    # ------------------------------------------------------------------
-    # Lifecycle
-    # ------------------------------------------------------------------
 
     def start(self) -> None:
         """Start the background inference thread."""
