@@ -4,11 +4,7 @@ Architecture summary:
   Vision encoder  : ViT-based, native dynamic resolution (NaViT style)
   Language model  : Qwen2.5 transformer backbone
   Fusion          : Cross-attention + rope position embeddings for 2D
-  Quantisation    : AWQ int4 (preferred on Jetson), BitsAndBytes int8 fallback
-References:
-  - Qwen2.5-VL paper : https://arxiv.org/abs/2409.12191
-  - HuggingFace hub  : Qwen/Qwen2.5-VL-7B-Instruct
-  - kornia ONNX work : kornia PR #3463 (fix Resize ONNX export compatibility) """
+  Quantisation    : AWQ int4 (preferred on Jetson), BitsAndBytes int8 fallback """
 from __future__ import annotations
 import os
 import time
