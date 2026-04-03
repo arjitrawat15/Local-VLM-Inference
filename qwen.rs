@@ -1,24 +1,7 @@
-//! `QwenVlBackend` — Qwen2.5-VL vision encoder via ONNX Runtime.
-//!
-//! Uses the `ort` crate (ONNX Runtime Rust bindings) to run the vision
-//! encoder exported by `scripts/export_onnx.py`.
-//!
-//! The language model decode loop is currently delegated to the Python
-//! layer via a shared memory IPC channel. A pure-Rust LLM decode backend
-//! (llama.cpp / candle) is planned for post-GSoC.
-//!
-//! # ONNX Runtime execution providers (in priority order)
-//!
-//! 1. `TensorrtExecutionProvider` — fastest on Jetson (FP16 engine cached)
-//! 2. `CUDAExecutionProvider`     — fallback with cuDNN
-//! 3. `CPUExecutionProvider`      — CI / testing (no GPU required)
-
 use std::path::Path;
 use std::time::Instant;
-
 use ndarray::{Array4, ArrayView4, s};
 use ort::{Environment, ExecutionProvider, GraphOptimizationLevel, Session, SessionBuilder};
-
 use crate::{VlmConfig, VlmError};
 use crate::backend::{FeatureTensor, VlmBackend};
 
@@ -31,14 +14,9 @@ pub struct QwenVlBackend {
 
 impl QwenVlBackend {
     /// Load the ONNX vision encoder from disk.
-    ///
     /// # Parameters
-    /// - `onnx_path`: Path to `qwen2.5-vl-7b-awq_vision_encoder.onnx`
-    /// - `config`: Runtime configuration
-    ///
-    /// # Errors
-    /// Returns `VlmError::LoadFailed` if the ONNX file cannot be read or
-    /// if the ONNX Runtime session cannot be initialised.
+    /// - onnx_path: Path to qwen2.5-vl-7b-awq_vision_encoder.onnx
+    /// - config: Runtime configuration
     pub fn from_onnx<P: AsRef<Path>>(
         onnx_path: P,
         config: VlmConfig,
@@ -98,10 +76,6 @@ impl QwenVlBackend {
     /// ImageNet-style normalisation:
     ///   mean = [0.485, 0.456, 0.406]
     ///   std  = [0.229, 0.224, 0.225]
-    ///
-    /// Note: Qwen2.5-VL uses its own normalisation constants; this is a
-    /// placeholder that will be replaced with the exact values from the
-    /// processor config during the GSoC implementation.
     fn preprocess(
         &self,
         pixel_values: &[f32],
@@ -191,11 +165,6 @@ impl VlmBackend for QwenVlBackend {
         features: &FeatureTensor,
         prompt: &str,
     ) -> Result<String, VlmError> {
-        // Phase 1 (GSoC week 9): delegate to Python via subprocess / shared memory.
-        // Phase 2 (post-GSoC):   pure-Rust LLM decode with llama.cpp / candle.
-        //
-        // For the prototype this returns a placeholder to prove the pipeline
-        // compiles and the feature tensor flows end-to-end.
         let _ = features; // will be used in full implementation
         let _ = prompt;
         Ok(format!(
