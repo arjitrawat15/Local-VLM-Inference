@@ -1,29 +1,15 @@
-"""
-kornia_vlm.benchmarks.suite
-============================
+""" kornia_vlm.benchmarks.suite
 Comprehensive benchmark suite for VLM inference on embedded hardware.
 
 Measures
---------
   - End-to-end latency  (first token latency + generation latency)
   - Vision encoder throughput (ms/image, images/sec)
   - Peak GPU / unified memory (Jetson)
   - Token generation speed (tokens/sec)
   - Quality metrics (CIDEr for captioning, BLEU-4 for VQA if ground truth available)
 
-Outputs
--------
-  - JSON report saved to disk
-  - Markdown table for README embedding (mirrors the benchmark publishing
-    task in kornia-rs issue #718 — assigned to arjitrawat15)
-
-Usage
------
-  python -m kornia_vlm.benchmarks.suite --model qwen2.5-vl-7b-awq \\
-      --backend tensorrt --runs 200 --output results/jetson_orin.json
-"""
+Outputs - JSON report saved to disk"""
 from __future__ import annotations
-
 import argparse
 import json
 import sys
@@ -31,13 +17,7 @@ import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import List, Optional
-
 import numpy as np
-
-
-# ---------------------------------------------------------------------------
-# Data structures
-# ---------------------------------------------------------------------------
 
 @dataclass
 class LatencyStats:
